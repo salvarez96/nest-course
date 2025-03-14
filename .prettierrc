@@ -1,6 +1,6 @@
 {
   "singleQuote": true,
-  "trailingComma": "all",
+  "trailingComma": "es5",
   "endOfLine": "lf",
   "bracketSpacing": true,
   "semi": true,
