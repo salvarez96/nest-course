@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 type DoubleParamEndpoint = {
@@ -20,8 +20,15 @@ export class AppController {
   }
 
   @Get('new-endpoint/:id')
-  getNewEndpointWithId(@Param('id') id: string): string {
-    return 'This is the new endpoint with id: ' + id;
+  getNewEndpointWithId(
+    @Param('id') id: string,
+    @Query('country') country: string,
+  ): string {
+    return (
+      'This is the new endpoint with id: ' +
+      id +
+      (country ? ' and country: ' + country : '')
+    );
   }
 
   @Get('new-endpoint/:id/route/:name')
