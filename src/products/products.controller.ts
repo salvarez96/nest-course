@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -12,27 +12,57 @@ interface ProductsFilters {
   category?: string;
 }
 
+interface CreateProductDTO {
+  name: string;
+  category: string;
+  brand: string;
+  price: number;
+}
+
+type Response = {
+  code: number;
+  message: string;
+  data?: CreateProductDTO;
+};
+
 @Controller('api/products')
 export class ProductsController {
   @Get()
-  getAllProducts(@Query() productsFilters: ProductsFilters): string {
+  getAll(@Query() productsFilters: ProductsFilters): Response {
     const { name, category } = productsFilters;
-    return (
-      'This gets all products' +
-      (name ? ' with name: ' + name : '') +
-      (category ? ' with category: ' + category : '')
-    );
+    return {
+      code: 200,
+      message:
+        'This gets all products' +
+        (name ? ' with name: ' + name : '') +
+        (category ? ' with category: ' + category : ''),
+    };
   }
 
   @Get(':id')
-  getProduct(@Param('id') id: string): string {
-    return 'This gets a product with id: ' + id;
+  get(@Param('id') id: string): Response {
+    return {
+      code: 200,
+      message: 'This gets a product with id: ' + id,
+    };
   }
 
   @Get(':id/stats/:stats')
   getNewEndpointWithIdAndName(
     @Param() { id, stats }: DoubleParamEndpoint
-  ): string {
-    return 'This gets the product with id: ' + id + ' and stats: ' + stats;
+  ): Response {
+    return {
+      code: 200,
+      message: 'This gets the product with id: ' + id + ' and stats: ' + stats,
+    };
+  }
+
+  @Post()
+  create(@Body() body: CreateProductDTO): Response {
+    return {
+      code: 201,
+      message: 'Product successfully created',
+      data: body,
+    };
   }
 }
