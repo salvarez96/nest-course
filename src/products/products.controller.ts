@@ -24,14 +24,14 @@ export class ProductsController {
     );
   }
 
-  @Get('products/:id')
+  @Get(':id')
   getProduct(@Param('id') id: string): string {
     return 'This gets a product with id: ' + id;
   }
 
-  @Get('products/:id/stats/:stats')
+  @Get(':id/stats/:stats')
   getNewEndpointWithIdAndName(
-    @Param() { id, stats }: DoubleParamEndpoint,
+    @Param() { id, stats }: DoubleParamEndpoint
   ): string {
     return 'This gets the product with id: ' + id + ' and stats: ' + stats;
   }
