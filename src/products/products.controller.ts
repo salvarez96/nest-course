@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -28,7 +31,7 @@ interface CreateProductDTO {
   price: number;
 }
 
-type Response = {
+type ApiResponse = {
   code: number;
   message: string;
   data?: CreateProductDTO | { id?: number };
@@ -37,7 +40,7 @@ type Response = {
 @Controller('api/products')
 export class ProductsController {
   @Get()
-  getAll(@Query() productsFilters: ProductsFilters): Response {
+  getAll(@Query() productsFilters: ProductsFilters): ApiResponse {
     const { name, category } = productsFilters;
     return {
       code: 200,
@@ -49,7 +52,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  get(@Param('id') id: string): Response {
+  get(@Param('id') id: string): ApiResponse {
     return {
       code: 200,
       message: 'This gets a product with id: ' + id,
@@ -59,7 +62,7 @@ export class ProductsController {
   @Get(':id/stats/:stats')
   getNewEndpointWithIdAndName(
     @Param() { id, stats }: DoubleParamEndpoint
-  ): Response {
+  ): ApiResponse {
     return {
       code: 200,
       message: 'This gets the product with id: ' + id + ' and stats: ' + stats,
@@ -67,7 +70,7 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() body: CreateProductDTO): Response {
+  create(@Body() body: CreateProductDTO): ApiResponse {
     return {
       code: 201,
       message: 'Product successfully created',
@@ -76,19 +79,30 @@ export class ProductsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() body: CreateProductDTO): Response {
-    return {
-      code: 200,
-      message: 'Product edited successfully',
-      data: {
-        id: id,
-        ...body,
-      },
-    };
+  update(
+    @Res() res: Response,
+    @Param('id') id: number,
+    @Body() body: CreateProductDTO
+  ) {
+    if (id != 100) {
+      return res.status(HttpStatus.OK).json({
+        code: 200,
+        message: 'Product edited successfully',
+        data: {
+          id: id,
+          ...body,
+        },
+      });
+    }
+
+    return res.status(HttpStatus.NOT_ACCEPTABLE).json({
+      code: HttpStatus.NOT_ACCEPTABLE,
+      message: 'Id: 100 causes an error',
+    });
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number): Response {
+  delete(@Param('id') id: number): ApiResponse {
     return {
       code: 200,
       message: 'Product deleted successfully',
