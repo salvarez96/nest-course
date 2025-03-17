@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -22,7 +31,7 @@ interface CreateProductDTO {
 type Response = {
   code: number;
   message: string;
-  data?: CreateProductDTO;
+  data?: CreateProductDTO | { id?: number };
 };
 
 @Controller('api/products')
@@ -63,6 +72,29 @@ export class ProductsController {
       code: 201,
       message: 'Product successfully created',
       data: body,
+    };
+  }
+
+  @Put(':id')
+  update(@Param('id') id: number, @Body() body: CreateProductDTO): Response {
+    return {
+      code: 200,
+      message: 'Product edited successfully',
+      data: {
+        id: id,
+        ...body,
+      },
+    };
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number): Response {
+    return {
+      code: 200,
+      message: 'Product deleted successfully',
+      data: {
+        id: id,
+      },
     };
   }
 }
