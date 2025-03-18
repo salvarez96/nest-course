@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -40,9 +41,9 @@ export class ProductsController {
   }
 
   @Get(':id')
-  getOne(@Res() res: Response, @Param('id') id: string) {
+  getOne(@Res() res: Response, @Param('id', ParseIntPipe) id: number) {
     try {
-      const product = this.productsService.findOne(+id);
+      const product = this.productsService.findOne(id);
 
       return this.parseResponse(res, HttpStatus.OK, 'Product found', product);
     } catch (error) {
@@ -102,9 +103,9 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  delete(@Res() res: Response, @Param('id') id: string) {
+  delete(@Res() res: Response, @Param('id', ParseIntPipe) id: number) {
     try {
-      const productToDelete = this.productsService.delete(+id);
+      const productToDelete = this.productsService.delete(id);
 
       return this.parseResponse(
         res,
