@@ -16,10 +16,11 @@ import { Response } from 'express';
 import { ProductsService } from '../service/products.service';
 import {
   ApiResponse,
-  CreateProductDTO,
   DoubleParamEndpoint,
   ProductsFilters,
 } from '../types/products.types';
+import { CreateProductPipe } from 'src/common/pipes/create-product.pipe';
+import { CreateProductDTO } from '../types/products.dto';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -64,7 +65,10 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Res() res: Response, @Body() body: CreateProductDTO) {
+  create(
+    @Res() res: Response,
+    @Body(CreateProductPipe) body: CreateProductDTO
+  ) {
     const newProduct = this.productsService.create(body);
 
     if (newProduct) {
@@ -85,7 +89,7 @@ export class ProductsController {
   update(
     @Res() res: Response,
     @Param('id') id: string,
-    @Body() body: CreateProductDTO
+    @Body(CreateProductPipe) body: CreateProductDTO
   ) {
     try {
       const productToEdit = this.productsService.update(+id, body);

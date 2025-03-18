@@ -1,12 +1,10 @@
-export type ProductDTO = {
-  id?: number;
+export class ProductEntity {
+  id: number;
   category: string;
   name: string;
   brand: string;
   price: number;
-};
-
-export type CreateProductDTO = Omit<ProductDTO, 'id'>;
+}
 
 export interface DoubleParamEndpoint {
   id: string;
@@ -21,5 +19,5 @@ export interface ProductsFilters {
 export interface ApiResponse {
   code: number;
   message: string;
-  data?: ProductDTO[] | ProductDTO;
+  data?: ProductEntity[] | ProductEntity;
 }
