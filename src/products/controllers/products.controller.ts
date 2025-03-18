@@ -11,6 +11,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ProductDTO, ProductsService } from '../service/products.service';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -34,28 +35,41 @@ interface CreateProductDTO {
 type ApiResponse = {
   code: number;
   message: string;
-  data?: CreateProductDTO | { id?: number };
+  data?: CreateProductDTO | { id?: number } | ProductDTO[];
 };
 
 @Controller('api/products')
 export class ProductsController {
+  constructor(private productsService: ProductsService) {}
+
   @Get()
-  getAll(@Query() productsFilters: ProductsFilters): ApiResponse {
+  getAll(@Res() res: Response, @Query() productsFilters: ProductsFilters) {
     const { name, category } = productsFilters;
-    return {
+    return res.status(HttpStatus.OK).json({
       code: 200,
       message:
         'This gets all products' +
         (name ? ' with name: ' + name : '') +
         (category ? ' with category: ' + category : ''),
-    };
+      data: this.productsService.findAll(),
+    });
   }
 
   @Get(':id')
-  get(@Param('id') id: string): ApiResponse {
+  getOne(@Res() res: Response, @Param('id') id: string) {
+    const product = this.productsService.findOne(+id);
+
+    if (!product) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        code: 404,
+        message: "The product doesn't exist",
+      });
+    }
+
     return {
       code: 200,
-      message: 'This gets a product with id: ' + id,
+      message: 'Product found',
+      data: product,
     };
   }
 
@@ -70,45 +84,60 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() body: CreateProductDTO): ApiResponse {
-    return {
-      code: 201,
-      message: 'Product successfully created',
-      data: body,
-    };
+  create(@Res() res: Response, @Body() body: CreateProductDTO) {
+    const newProduct = this.productsService.create(body);
+
+    if (newProduct) {
+      return res.status(HttpStatus.CREATED).json({
+        code: 201,
+        message: 'Product successfully created',
+        data: newProduct,
+      });
+    }
+
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      code: 400,
+      message: "The product doesn't exist",
+    });
   }
 
   @Put(':id')
   update(
     @Res() res: Response,
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() body: CreateProductDTO
   ) {
-    if (id != 100) {
+    const productToEdit = this.productsService.update(+id, body);
+
+    if (productToEdit) {
       return res.status(HttpStatus.OK).json({
         code: 200,
         message: 'Product edited successfully',
-        data: {
-          id: id,
-          ...body,
-        },
+        data: productToEdit,
       });
     }
 
-    return res.status(HttpStatus.NOT_ACCEPTABLE).json({
-      code: HttpStatus.NOT_ACCEPTABLE,
-      message: 'Id: 100 causes an error',
+    return res.status(HttpStatus.NOT_FOUND).json({
+      code: HttpStatus.NOT_FOUND,
+      message: "The product doesn't exist",
     });
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number): ApiResponse {
-    return {
-      code: 200,
-      message: 'Product deleted successfully',
-      data: {
-        id: id,
-      },
-    };
+  delete(@Res() res: Response, @Param('id') id: string) {
+    const productToDelete = this.productsService.delete(+id);
+
+    if (productToDelete) {
+      return res.status(HttpStatus.OK).json({
+        code: 200,
+        message: 'Product deleted successfully',
+        data: productToDelete,
+      });
+    }
+
+    return res.status(HttpStatus.NOT_FOUND).json({
+      code: HttpStatus.NOT_FOUND,
+      message: 'Product not found',
+    });
   }
 }
