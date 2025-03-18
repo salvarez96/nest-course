@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsController } from './products/products.controller';
+import { ProductsController } from './products/controllers/products.controller';
 import { ProductsModule } from './products/products.module';
 import { CategoriesController } from './categories/controllers/categories.controller';
 import { OrdersController } from './orders/controllers/orders.controller';
