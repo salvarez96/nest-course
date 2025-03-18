@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-type ProductDTO = {
+export type ProductDTO = {
   id?: number;
   name: string;
   brand: string;
@@ -34,12 +34,7 @@ export class ProductsService {
   }
 
   create(product: ProductDTO) {
-    if (
-      product.id &&
-      this.products.some((existingProduct) => existingProduct.id === product.id)
-    ) {
-      return `The product with id: ${product.id} already exists.`;
-    }
+    if (product.id && this.findOne(product.id)) return false;
 
     if (product.id) delete product.id;
 
@@ -53,16 +48,14 @@ export class ProductsService {
     return newProduct;
   }
 
-  update(product: ProductDTO) {
+  update(id: number, product: ProductDTO) {
     const productIndex = this.products.findIndex(
-      (productToEdit) => productToEdit.id === product.id
+      (productToEdit) => productToEdit.id === id
     );
 
-    if (productIndex < 0) {
-      return `The product with id: ${product.id} doesn't exist`;
-    }
+    if (productIndex < 0) return false;
 
-    delete product.id;
+    if (product.id) delete product.id;
 
     this.products[productIndex] = {
       ...this.products[productIndex],
@@ -73,15 +66,13 @@ export class ProductsService {
   }
 
   delete(id: number) {
+    const product = this.findOne(id);
+
+    if (!product) return false;
+
     const productIndex = this.products.findIndex(
       (productToDelete) => productToDelete.id === id
     );
-
-    if (productIndex < 0) {
-      return `The product with id: ${id} doesn't exist`;
-    }
-
-    const product = this.findOne(id);
 
     this.products.splice(productIndex, 1);
 
