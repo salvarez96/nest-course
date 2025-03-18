@@ -12,27 +12,15 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ProductDTO, ProductsService } from '../service/products.service';
+import { ProductsService } from '../service/products.service';
+import {
+  ApiResponse,
+  CreateProductDTO,
+  DoubleParamEndpoint,
+  ProductsFilters,
+} from '../types/products.types';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
-
-interface DoubleParamEndpoint {
-  id: string;
-  stats: string;
-}
-
-interface ProductsFilters {
-  name?: string;
-  category?: string;
-}
-
-type CreateProductDTO = Omit<ProductDTO, 'id'>;
-
-interface ApiResponse {
-  code: number;
-  message: string;
-  data?: ProductDTO[] | ProductDTO;
-}
 
 @Controller('api/products')
 export class ProductsController {

@@ -1,12 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-export type ProductDTO = {
-  id?: number;
-  category: string;
-  name: string;
-  brand: string;
-  price: number;
-};
+import { ProductDTO } from '../types/products.types';
 
 @Injectable()
 export class ProductsService {
