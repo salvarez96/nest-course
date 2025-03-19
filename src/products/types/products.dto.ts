@@ -1,21 +1,28 @@
-// import { ProductEntity } from './products.types';
-
-// type ReadonlyProductEntity = Readonly<ProductEntity>;
-// type OmitFromProductEntity<T extends keyof ReadonlyProductEntity> = Omit<
-//   ReadonlyProductEntity,
-//   T
-// >;
+import { PartialType } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export class CreateProductDTO {
+  @IsString()
+  @IsNotEmpty()
   readonly category: string;
+
+  @IsString()
+  @IsNotEmpty()
   readonly name: string;
+
+  @IsString()
+  @IsNotEmpty()
   readonly brand: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @IsPositive()
   readonly price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @IsPositive()
+  readonly stock: number;
 }
 
-export class UpdateProductDTO {
-  readonly category?: string;
-  readonly name?: string;
-  readonly brand?: string;
-  readonly price?: number;
-}
+export class UpdateProductDTO extends PartialType(CreateProductDTO) {}

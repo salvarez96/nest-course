@@ -4,6 +4,7 @@ export class ProductEntity {
   name: string;
   brand: string;
   price: number;
+  stock: number;
 }
 
 export interface DoubleParamEndpoint {
@@ -17,7 +18,7 @@ export interface ProductsFilters {
 }
 
 export interface ApiResponse {
-  code: number;
+  statusCode: number;
   message: string;
-  data?: ProductEntity[] | ProductEntity;
+  data?: ProductEntity[] | ProductEntity | string[];
 }

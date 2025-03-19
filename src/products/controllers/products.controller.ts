@@ -19,8 +19,7 @@ import {
   DoubleParamEndpoint,
   ProductsFilters,
 } from '../types/products.types';
-import { CreateProductPipe } from 'src/common/pipes/create-product.pipe';
-import { CreateProductDTO } from '../types/products.dto';
+import { CreateProductDTO, UpdateProductDTO } from '../types/products.dto';
 
 // create everything with nest g co products ; nest g mo products ; nest g s products
 
@@ -59,16 +58,13 @@ export class ProductsController {
     @Param() { id, stats }: DoubleParamEndpoint
   ): ApiResponse {
     return {
-      code: 200,
+      statusCode: 200,
       message: 'This gets the product with id: ' + id + ' and stats: ' + stats,
     };
   }
 
   @Post()
-  create(
-    @Res() res: Response,
-    @Body(CreateProductPipe) body: CreateProductDTO
-  ) {
+  create(@Res() res: Response, @Body() body: CreateProductDTO) {
     const newProduct = this.productsService.create(body);
 
     if (newProduct) {
@@ -88,11 +84,11 @@ export class ProductsController {
   @Put(':id')
   update(
     @Res() res: Response,
-    @Param('id') id: string,
-    @Body(CreateProductPipe) body: CreateProductDTO
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateProductDTO
   ) {
     try {
-      const productToEdit = this.productsService.update(+id, body);
+      const productToEdit = this.productsService.update(id, body);
 
       return this.parseResponse(
         res,
@@ -131,7 +127,7 @@ export class ProductsController {
     data?: ApiResponse['data']
   ): Response<ApiResponse> {
     const jsonResponse = {
-      code: code,
+      statusCode: code,
       message: message,
       data: data,
     };

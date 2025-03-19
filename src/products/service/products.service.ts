@@ -12,6 +12,7 @@ export class ProductsService {
       category: 'Category 1',
       brand: 'Brand 1',
       price: 20,
+      stock: 10,
     },
     {
       id: ++this.idCounter,
@@ -19,6 +20,7 @@ export class ProductsService {
       category: 'Category 2',
       brand: 'Brand 2',
       price: 30,
+      stock: 15,
     },
   ];
 
